@@ -1,5 +1,6 @@
 var PLAY = 1;
 var END = 0;
+var WIN = 2;
 var gameState = PLAY;
 var l1=1;
 var level=1;
@@ -17,6 +18,8 @@ var gameOver, restart;
 var knife,fruit ,monster,fruitGroup,monsterGroup, score,r,randomFruit, position;
 var knifeImage , fruit1, fruit2 ,fruit3,fruit4, monsterImage, gameOverImage;
 var gameOverSound ,knifeSwoosh;
+
+message = 1;
 
 function preload(){
   trex_running =   loadAnimation("trex1.png","trex3.png","trex4.png");
@@ -47,11 +50,17 @@ function preload(){
   gameOverSound = loadSound("gameover.mp3")
   knifeSwooshSound = loadSound("knifeSwoosh.mp3")
 
+  message1_img = loadImage("virus1.png");
+
 }
 
 function setup() {
     
    createCanvas(600, 600);
+
+   message1 = createSprite(300,300);
+  message1.addImage(message1_img);
+  message1.visible=false;
   
    knife=createSprite(40,200,20,20);
    knife.addImage(knifeImage);
@@ -89,6 +98,10 @@ function setup() {
   
   invisibleGround = createSprite(200,190,400,10);
   invisibleGround.visible = false;
+
+  message1 = createSprite(300,300);
+  message1.addImage(message1_img);
+  message1.visible=false;
   
   cloudsGroup = new Group();
   obstaclesGroup = new Group();
@@ -97,12 +110,15 @@ function setup() {
 }
 
 function draw() {
-
-  if (level ===1 ){
+  //background("lightblue");
+  if (level === 1 ){
     game1();
   } 
-  if (level ===2){
-    game2();
+  if (level === 2){
+        game2();
+  }
+  if(level === 3){
+    game3();
   }
   
 }
@@ -124,13 +140,11 @@ function game1(){
       fruitGroup.destroyEach();
       
       knifeSwooshSound.play();
-      score=score+2;
+      score=score+5;
       if(score===20){
-        level=level+1;
+        level=2;
       }
-    }
-    else
-    {
+    } 
       // Go to end state if sword touching enemy
       if(monsterGroup.isTouching(knife)){
         gameState=END;
@@ -147,7 +161,7 @@ function game1(){
         knife.scale=2;
         knife.x=300;
         knife.y=300;
-      }
+      
     }
     }
   drawSprites();
@@ -155,20 +169,35 @@ function game1(){
   textSize(25);
   text("Score : "+ score,250,50);
 
- console.log("level1");
+ console.log(level);
  
   
 }
 
 function game2(){
+  console.log(level)
+  console.log("you're in 2")
+  background(message1_img);
+  knife.visible=false;
+  message1.visible=true;
+  if(mousePressedOver(message1)){
+    level=3;
+  }
+}
+
+function game3(){
    //trex.debug = true;
  background(255);
- knife.visible=false;
+ //knife.visible=false;
  trex.visible=true;
  ground.visible=true;
+ message1.visible=false;
  
  text("Score: "+ count, 500,50);
 
+ if(count >=1000){
+   level=4;
+ }
  
  if (gameState===PLAY){
    count = count + Math.round(getFrameRate()/60);
@@ -214,7 +243,7 @@ function game2(){
      reset();
    }
  }
- console.log("level2")
+ console.log(level)
  console.log(gameState);
  drawSprites();
 }
@@ -343,4 +372,8 @@ function fruits(){
     
     fruitGroup.add(fruit);
   }
+}
+
+function changeLevel(){
+  level=level+1;
 }
